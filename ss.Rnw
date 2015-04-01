@@ -1,0 +1,204 @@
+%% LyX 2.1.2 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[10pt]{beamer}
+\usepackage[T1]{fontenc}
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+\usepackage{url}
+\ifx\hypersetup\undefined
+  \AtBeginDocument{%
+    \hypersetup{unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=false,bookmarksopen=false,
+ breaklinks=false,pdfborder={0 0 0},backref=false,colorlinks=false}
+  }
+\else
+  \hypersetup{unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=false,bookmarksopen=false,
+ breaklinks=false,pdfborder={0 0 0},backref=false,colorlinks=false}
+\fi
+
+\makeatletter
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
+\providecommand{\LyX}{\texorpdfstring%
+  {L\kern-.1667em\lower.25em\hbox{Y}\kern-.125emX\@}
+  {LyX}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
+ % this default might be overridden by plain title style
+ \newcommand\makebeamertitle{\frame{\maketitle}}%
+ % (ERT) argument for the TOC
+ \AtBeginDocument{%
+   \let\origtableofcontents=\tableofcontents
+   \def\tableofcontents{\@ifnextchar[{\origtableofcontents}{\gobbletableofcontents}}
+   \def\gobbletableofcontents#1{\origtableofcontents}
+ }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+\usetheme{PaloAlto}
+
+\makeatother
+
+\begin{document}
+<<setup, include=FALSE>>=
+library(knitr)
+opts_chunk$set(fig.path='figure/beamer-',fig.align='center',fig.show='hold',size='footnotesize')
+@
+
+\title[ Q-Q plot and Normality Test]{Report}
+
+
+\author{Xu Wang%
+\thanks{I thank Yihui Xie and Yuchen Wang for providing this machine.%
+}}
+\makebeamertitle   % the line can not be deleted,or you will be shabi.
+
+\section{Assignment}
+\begin{frame}[fragile]{Assignment}
+
+\quad The data in Table 1.5 are 42 measurements on air-pollution variables recorded at 12:00 noon in the Los Angeles area on different days. (See also the air-pollution data on the web at \url {www.prenhall.com/statistics}. )
+\begin{enumerate}
+\item Consider the air-pollution data given in {\color{red} \textbf{Table 1.5}} . Construct a \emph{Q-Q} plot for the solar radiation measurements .
+\item Carry out a test for normality based on the correlation coefficient $r_Q$ [see ({\color{red}\textbf{4-31} })]. Let $\alpha$ = .05 and use the entry corresponding to \emph{n} = 40 in  {\color{red} \textbf{Table 4.2}}.
+
+\end{enumerate}
+
+
+
+
+\end{frame}
+\subsection*{Table 1.5}
+\begin{frame}[fragile]{Table 1.5}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  haven't done
+<< >>=
+data <- read.csv('C:\\Users\\WangXu\\Desktop\\rapidminer\\data.csv'
+,head=FALSE)
+names(data) <- c('Wind', 'Solar_radiation', 'CO', 'NO', 'NO2', 'O3'
+, 'HC')
+head(data)
+@
+\end{frame}
+
+\subsection*{$r_Q$}
+\begin{frame}[fragile]{4-31}
+
+\begin{equation}
+r_Q = \frac{\sum_{j=1}^n (x_{(j)}-\bar{x})(q_{(j)}-\bar{q})}{\sqrt{\sum_{j=1}^n (x_{(j)}-\bar{x})^2}\sqrt{\sum_{j=1}^n (q_{(j)}-\bar{q})^2}}
+\end{equation}
+
+\end{frame}
+
+\subsection*{Table 4.2}
+\begin{frame}[fragile]{Table 4.2}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.75]{bbb.jpg}
+\caption{Table 4.2}
+\label{Table}
+\end{figure}
+\end{frame}
+
+\section{Procedure}
+\begin{frame}[fragile]{Procedure}
+The steps leading to a \emph{Q-Q} plot are as follows:
+\begin{enumerate}
+\item  Order the original observations to get $x_{(1)}$, $x_{(2)}$,... $x_{(n)}$ and their corresponding
+probability values \emph{$(1 -\frac{1}{2})/n$}, \emph{$(2 -\frac{1}{2})/n$},... \emph{$(n -\frac{1}{2})/n$};
+\item Calculate the standard normal quantiles $q_{(1)}$, $q_{(2)}$,...$q_{(n)}$
+\item Plot the pairs of observations $(q_{(1)}, x_{(1)})$, $(q_{(2)}, x_{(2)})$,...$(q_{(n)}, x_{(n)})$, and examine the "straightness" of the outcome.
+
+
+
+
+
+\end{enumerate}
+
+\end{frame}
+
+\section{Code}
+\begin{frame}[fragile]{Code}
+
+
+Text is nice but let's see what happens if we make a couple of plots
+in our chunk:
+
+
+<<boring-plots,fig.width=4,fig.height=3.5,out.width='.45\\linewidth'>>=
+data <- read.csv('C:\\Users\\WangXu\\Desktop\\rapidminer\\data.csv'
+,head=FALSE)
+names(data) <- c('Wind', 'Solar_radiation', 'CO', 'NO', 'NO2', 'O3'
+, 'HC')
+test_data <- data$Solar_radiation
+test_data <- sort(test_data)
+quantile <- c()
+quantile[1]  <- qnorm((1-0.5)/length(test_data))
+for (i in 2:length(test_data)) {
+if (test_data[i-1]<test_data[i]) {
+  quantile[i] <- qnorm((i-0.5)/length(test_data))
+} else {
+  quantile[i] = quantile[i-1]
+}
+}
+plot(quantile,test_data)
+qqline(test_data)
+
+@
+
+\end{frame}
+
+\section{Q-Q Plot}
+\begin{frame}[fragile]{Q-Q Plot}
+
+<<fig.width=5,fig.height=4.5,out.width='.75\\linewidth', echo=FALSE>>=
+
+plot(quantile,test_data)
+qqline(test_data)
+
+@
+
+\end{frame}
+
+\section{Normality Test}
+\begin{frame}[fragile]{Normality Test}
+
+\emph{$H_0$:} The variable "Solar radiation" is normally distributed 
+\textbf{vs} 
+
+\emph{$H_1$:} The variable "Solar radiation" is not normally distributed
+
+<< fig.show='hide'>>=
+a <- qqnorm(test_data)
+a$x <- sort(a$x)
+a$y <- sort(a$y)
+sum((a$x-mean(a$x))*(a$y-mean(a$y))) / ((sum((a$x-mean(a$x))^2))^0.5*(sum((a$y-mean(a$y))^2))^0.5)
+
+@
+
+Due to the $r_Q$ is \Sexpr{sum((a$x-mean(a$x))*(a$y-mean(a$y))) / ((sum((a$x-mean(a$x))^2))^0.5*(sum((a$y-mean(a$y))^2))^0.5)} . Table 4.2 shows when n=40, $\alpha$ = 0.05, the $r_Q$ is 0.9726 > the result in this question. So I reject this null hypothesis. We can get the conclusion is {\color{red} \textbf{The variable Solar radiation is not normally distributed}}
+\end{frame}
+
+\section{Question}
+\begin{frame}[fragile]{Which is \emph{Q-Q} Plot ?}
+We can see this two figures.
+
+<<fig.width=6,fig.height=4.5,out.width='.45\\linewidth'>>=
+plot(quantile,test_data, main='Normal Q-Q Plot')
+qqline(test_data)
+qqnorm(test_data)
+qqline(test_data)
+
+@
+
+\end{frame}
+
+\begin{frame}[fragile]{}
+
+\begin{center}
+
+
+
+\Huge Thanks
+\end{center}
+\end{frame}
+\end{document}
